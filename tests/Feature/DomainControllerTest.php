@@ -53,7 +53,7 @@ class DomainControllerTest extends TestCase
         $d = Domain::factory()->create();
         $resp = $this->delete(route('domains.destroy', $d));
         $resp->assertRedirect(route('domains.index'));
-        $this->assertDeleted($d);
+        $this->assertDatabaseMissing('domains', ['id' => $d->id]);
     }
 
     public function test_renew_domain()

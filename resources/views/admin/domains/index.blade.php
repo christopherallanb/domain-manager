@@ -68,7 +68,7 @@
                                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
                                             </path>
                                         </svg></a>
-                                    <form action="{{ route('domains.renew', $domain) }}" method="POST" class="inline">
+                                    <form action="{{ route('domains.renew', $domain) }}" method="POST" class="inline needs-confirm" data-confirm="Renovar este domínio?">
                                         @csrf
                                         <input type="hidden" name="new_date"
                                             value="{{ \Carbon\Carbon::parse($domain->expiration_date)->addYear()->format('Y-m-d') }}">
@@ -79,8 +79,8 @@
                                                 </path>
                                             </svg></button>
                                     </form>
-                                    <form action="{{ route('domains.destroy', $domain) }}" method="POST" class="inline"
-                                        onsubmit="return confirm('Excluir este domínio?')">@csrf @method('DELETE')<button
+                                    <form action="{{ route('domains.destroy', $domain) }}" method="POST" class="inline needs-confirm"
+                                        data-confirm="Excluir este domínio?">@csrf @method('DELETE')<button
                                             type="submit" class="p-1 rounded hover:bg-muted"><svg
                                                 class="h-3.5 w-3.5 text-danger" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">

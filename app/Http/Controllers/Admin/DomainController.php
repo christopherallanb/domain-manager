@@ -160,20 +160,12 @@ class DomainController extends Controller
     public function importCsv(Request $request)
     {
         $request->validate([ 'file' => 'required|file|mimes:csv,txt' ]);
-        $path = $request->file('file')->getRealPath();
-        $rows = array_map('str_getcsv', file($path));
-        $header = array_map('trim', array_shift($rows));
-        foreach ($rows as $row) {
-            $data = array_combine($header, $row);
-            Domain::updateOrCreate(['name' => $data['name']], [
-                'registrar' => $data['registrar'] ?? null,
-                'expiration_date' => $data['expiration_date'] ?? null,
-                'annual_cost' => $data['annual_cost'] ?? 0,
-                'notes' => $data['notes'] ?? null,
-                'auto_renew' => isset($data['auto_renew']) ? (bool)$data['auto_renew'] : false,
-            ]);
-        }
-        return redirect()->back()->with('success', 'CSV importado.');
+        $file = $request->file('file');
+        $name = 'imports/domains_import_'.time().'.csv';
+        $path = $file->storeAs('imports', basename($name));
+        // Dispatch job to process import
+        dispatch(new \App\Jobs\ImportDomainsCsv(storage_path('app/'.$path)));
+        return redirect()->back()->with('success', 'CSV recebido. Importação em segundo plano.');
     }
 
     /** Export domains CSV */

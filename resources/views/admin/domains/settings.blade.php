@@ -48,9 +48,9 @@
                     </div>
                 </form>
                 {{-- flash handled by layout toast --}}
-                            alert('{{ session('success') }}');
-                        });
-                    </script>
+                alert('{{ session('success') }}');
+                });
+                </script>
                 @endif
             </div>
 

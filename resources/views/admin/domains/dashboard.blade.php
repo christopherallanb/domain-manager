@@ -89,7 +89,7 @@
                                     {{ $days }} dias
                                 @endif
                             </span>
-                            <form action="{{ route('domains.renew', $domain) }}" method="POST" class="inline">
+                            <form action="{{ route('domains.renew', $domain) }}" method="POST" class="inline needs-confirm" data-confirm="Renovar este domínio?">
                                 @csrf
                                 <input type="hidden" name="new_date"
                                     value="{{ \Carbon\Carbon::parse($domain->expiration_date)->addYear()->format('Y-m-d') }}">
@@ -128,6 +128,8 @@
                 const values = Object.values(data);
                 const ctx = document.getElementById('registrarChart');
                 if (!ctx) return;
+                const palette = ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#F472B6'];
+                const colors = labels.map((_, i) => palette[i % palette.length]);
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -135,12 +137,31 @@
                         datasets: [{
                             label: 'Custo anual (R$)',
                             data: values,
-                            backgroundColor: '#60A5FA'
+                            backgroundColor: colors
                         }]
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const val = context.raw || 0;
+                                        return 'R$ ' + val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'R$ ' + Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                                    }
+                                }
+                            }
+                        }
                     }
                 });
             })();

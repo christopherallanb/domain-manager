@@ -47,9 +47,7 @@
                         </button>
                     </div>
                 </form>
-                @if (session('success'))
-                    <script>
-                        window.addEventListener('DOMContentLoaded', function() {
+                {{-- flash handled by layout toast --}}
                             alert('{{ session('success') }}');
                         });
                     </script>

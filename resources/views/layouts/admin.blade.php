@@ -35,5 +35,25 @@
         </div>
     </div>
     @stack('scripts')
+    <div id="toast" class="hidden fixed bottom-6 right-6 z-50 max-w-xs rounded-lg bg-card/90 border border-border px-4 py-2 shadow-lg text-sm"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const msg = {!! json_encode(session('success') ?? session('status') ?? null) !!};
+            if (msg) {
+                const t = document.getElementById('toast');
+                t.textContent = msg;
+                t.classList.remove('hidden');
+                t.style.opacity = 0;
+                // fade in
+                let opa = 0;
+                const fin = setInterval(()=>{ opa += 0.1; t.style.opacity = opa; if(opa>=1) clearInterval(fin); }, 30);
+                setTimeout(()=>{
+                    // fade out
+                    let op = 1;
+                    const fout = setInterval(()=>{ op -= 0.1; t.style.opacity = op; if(op<=0){ clearInterval(fout); t.classList.add('hidden'); } }, 30);
+                }, 3500);
+            }
+        });
+    </script>
 </body>
 </html>
